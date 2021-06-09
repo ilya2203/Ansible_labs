@@ -12,10 +12,9 @@ After vagrant has started, need to create ssh key and copy to nodes
     ssh-keygen
     ssh-copy-id node1.example.com && ssh-copy-id node2.example.com
 
-All ansible files from "Working_files" in repository copying to /home/ansible/lesson on control.example.com
+When vagrant runnnig, all ansible files in repository copying to /home/ansible/lesson on control.example.com
 
-Files list in "Working_files"
-
+    hw3_task1.http - role for install http
     hw3_task2.ftp - role for install ftp
     ansible.cfg   - ansible config
     inventory     - inventory file
