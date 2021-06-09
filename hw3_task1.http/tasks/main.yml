@@ -8,21 +8,10 @@
 - include_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
 
-- name: get status httpd
-  command: /usr/bin/systemctl is-active httpd
-  ignore_errors: yes
-  register: result_httpd
-
-- name: get status firewalld
-  command: /usr/bin/systemctl is-active	firewalld
-  ignore_errors: yes
-  register: result_fd
-  
 - name: starting httpd
   service: 
-    name: "{{ ansible_facts.ansible_local.my_facts.custom_facts.service }}"
+    name: httpd
     state: started
-    when: result_httpd.rc !=0
 
 - name: copy index.html to /var/www/html/
   copy:
@@ -37,7 +26,6 @@
   service:
     name: firewalld
     state: started
-    when: result_fd.rc !=0
        
 - name: enable port 80
   firewalld:
