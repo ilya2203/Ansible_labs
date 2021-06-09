@@ -1,0 +1,6 @@
+---
+- name: My role http
+  hosts: node1.example.com
+  
+  roles:
+    - role: hw3_task1.http

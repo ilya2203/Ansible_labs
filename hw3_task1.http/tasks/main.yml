@@ -1,0 +1,53 @@
+---
+# tasks file for hw3_task1.http
+# Variable setup.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+  
+# Setup/install tasks.
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: get status httpd
+  command: /usr/bin/systemctl is-active httpd
+  ignore_errors: yes
+  register: result_httpd
+
+- name: get status firewalld
+  command: /usr/bin/systemctl is-active	firewalld
+  ignore_errors: yes
+  register: result_fd
+  
+- name: starting httpd
+  service: 
+    name: "{{ ansible_facts.ansible_local.my_facts.custom_facts.service }}"
+    state: started
+    when: result_httpd.rc !=0
+
+- name: copy index.html to /var/www/html/
+  copy:
+    content: “Welcome to my web server for Ansible lab”
+    dest: /var/www/html/index.html
+    owner: ansible
+    group: ansible
+  notify:
+    - restart httpd  
+   
+- name: starting firewall.d
+  service:
+    name: firewalld
+    state: started
+    when: result_fd.rc !=0
+       
+- name: enable port 80
+  firewalld:
+    service: http
+    permanent: true
+    state: enabled
+  notify: reload firewalld
+ 
+- name: Ensure httpd service is running as configured.
+  service:
+    name: httpd
+    state: "{{ httpd_service_state }}"
+    enabled: "{{ httpd_service_enabled }}"

@@ -1,0 +1,7 @@
+---
+# defaults file for hw3_task1.http
+# The name of the http package to install.
+httpd_package_name: "httpd"
+
+httpd_service_state: started
+httpd_service_enabled: true

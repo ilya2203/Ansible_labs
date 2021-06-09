@@ -1,0 +1,38 @@
+---
+- hosts: all
+  tasks:
+  - name: install httpd
+    package: 
+      name: httpd
+      state: latest
+      
+  - name: starting httpd
+    service: 
+      name: httpd
+      state: started
+      enabled: yes
+      
+  - name: copy index.html to /var/www/html/
+    copy:
+      content: “Welcome to my web server”
+      dest: /var/www/html/index.html
+      owner: ansible
+      group: ansible
+         
+  - name: starting firewall.d
+    service:
+      name: firewalld
+      enabled: yes
+      state: started
+      
+  - name: enable port 80
+    firewalld:
+     service: http
+     permanent: true
+     state: enabled
+  
+  - name: reload firewall.d
+    service:
+      name: firewalld
+      state: reloaded
+... 

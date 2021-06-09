@@ -1,0 +1,6 @@
+---
+- name: My role
+  hosts: node1.example.com
+  
+  roles:
+    - role: hw3_task2.ftp

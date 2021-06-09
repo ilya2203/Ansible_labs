@@ -1,0 +1,35 @@
+---
+- hosts: all
+  tasks:
+  - name: get status httpd
+    command: /usr/bin/systemctl is-active httpd
+    ignore_errors: yes
+    register: result_httpd
+  
+  - name: stoping httpd
+    service: 
+      name: httpd
+      state: stopped
+    when: result_httpd == 0
+      
+  - name: uninstall httpd
+    package: 
+      name: httpd
+      state: absent 
+  
+  - name: remove index.html from /var/www/html/
+    file:
+      path: /var/www/html/index.html
+      state: absent
+              
+  - name: disable port 80
+    firewalld:
+     service: http
+     permanent: true
+     state: disabled
+  
+  - name: reload firewall.d
+    service:
+      name: firewalld
+      state: reloaded
+... 

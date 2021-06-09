@@ -1,0 +1,11 @@
+---
+# handlers file for hw3_task1.http
+
+- name: restart httpd
+  service: name=httpd state=restarted
+
+- name: reload httpd
+  service: name=httpd state=reloaded
+  
+- name: reload firewalld
+  service: name=firewalld state=reloaded  

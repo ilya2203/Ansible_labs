@@ -1,0 +1,5 @@
+---
+- name: Install semanage.
+  package:
+    name: "{{ semanage_package_name }}"
+    state: present

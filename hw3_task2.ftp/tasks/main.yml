@@ -1,0 +1,67 @@
+---
+# tasks file for hw3_task2.ftp
+# Variable setup.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+  
+# Setup/install tasks.
+- include_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+  
+# Additional features
+- import_tasks: add.yml  
+
+# Create upload folder
+- name: Create upload folder
+  file:   
+    path: /var/ftp/pub/upload
+    state: directory
+    mode: '0755'
+ 
+# Change owner on upload folder
+- name: Change upload ownership
+  file:
+    path: /var/ftp/pub/upload
+    state: directory
+    owner: ftp
+    group: ftp
+
+# Set contesx
+- sefcontext:
+    target: '/var/ftp/pub/upload(/.*)?'
+    setype: public_content_rw_t
+    state: present
+
+- name: Restorecon
+  command: restorecon -F -R -v /var/ftp/pub/upload
+  
+# Set setbool
+- name: Set ftpd_anon_write
+  seboolean:
+    name: ftpd_anon_write
+    state: yes
+    persistent: yes
+
+# vsftp setup.
+- name: Copy nginx configuration in place.
+  template:
+    src: "{{ vsftpd_conf_template }}"
+    dest: "{{ vsftpd_conf_file_path }}"
+    owner: root
+    group: "{{ root_group }}"
+    mode: 0644
+  notify: reload firewalld
+
+# Open FTP ports.
+- name: enable ftp
+  firewalld:
+    service: ftp
+    permanent: true
+    state: enabled
+  notify: reload firewalld
+ 
+- name: Ensure vsftpd service is running as configured.
+  service:
+    name: vsftpd
+    state: "{{ vsftpd_service_state }}"
+    enabled: "{{ vsftpd_service_enabled }}"

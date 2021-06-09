@@ -1,0 +1,18 @@
+---
+- hosts: all
+  vars_files:
+   - users.yml  
+  tasks:
+  - name: include password var
+    include_vars:
+      file: pass_hw2.yml
+      name: pass
+  - name: Creating users
+    user: 
+      name: "{{item.username}}"
+      comment: "{{item.username}}@example.com"
+      create_home: true
+      update_password: on_create
+      password: "{{pass.password}}"
+    with_items: "{{ users }}"  
+... 
