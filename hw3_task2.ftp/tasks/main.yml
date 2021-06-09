@@ -17,15 +17,9 @@
     path: /var/ftp/pub/upload
     state: directory
     mode: '0755'
- 
-# Change owner on upload folder
-- name: Change upload ownership
-  file:
-    path: /var/ftp/pub/upload
-    state: directory
     owner: ftp
     group: ftp
-
+ 
 # Set contesx
 - sefcontext:
     target: '/var/ftp/pub/upload(/.*)?'
